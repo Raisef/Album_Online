@@ -1,0 +1,113 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+
+@{
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+
+    if (!User.Identity.IsAuthenticated)
+    {
+        Response.SetStatus(HttpStatusCode.Unauthorized);
+        return;
+    }
+
+    if (!User.IsInRole("Admin"))
+    {
+        Response.SetStatus(HttpStatusCode.Forbidden);
+        return;
+    }
+
+    Page.Title = "Admin Toolbox";
+}
+
+@section styles{
+    <link href="~/Content/adminUtility.css" rel="stylesheet" />
+}
+
+@section scripts{
+    <script src="~/scripts/adminUtility.js"></script>
+}
+
+<a id="home" href="~/Index" class="glyphicon glyphicon-home"></a>
+
+<article class="admin-toolbox">
+    @{
+        var users = logicManager.UserLogic().GetAll();
+        if (users != null)
+        {
+            for (var i = 0; i < users.Count; i++)
+            {
+                var albumsCount = logicManager.AppAlbumLogic().GetCountByUser(users[i].Id);
+                var imagesCount = logicManager.ImageLogic().GetCountByUser(users[i].Id);
+                <div class="user-cell">
+                    <div class="user-avatar">
+                        <a href="~/Users/Index?id=@users[i].Id">
+                            <img src="~/Images/View?from=user&id=@users[i].Id" />
+                        </a>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name"><a href="~/Users/Index?id=@users[i].Id">@users[i].Login</a></span>
+                        <span class="albums-count">Albums: @albumsCount</span>
+                        <span class="images-count">Images: @imagesCount</span>
+                        <div class="controls">
+                            @if (User.Identity.Name != users[i].Login)
+                            {
+                                <button class="delete-user" value="@users[i].Id" title="Delete user"><i class="glyphicon glyphicon-remove"></i></button>
+                                if(users[i].Role != "Admin")
+                                {
+                                    <button class="change-role" value="@users[i].Role" title="Change role"><i class="glyphicon glyphicon-chevron-up"></i></button>
+                                }
+                                else
+                                {
+                                    <button class="change-role" value="@users[i].Role" title="Change role"><i class="glyphicon glyphicon-chevron-down"></i></button>
+                                }
+                            }
+                        </div>
+                    </div>
+                    
+                </div>
+            }
+        }
+    }
+</article>
+<div class="pop-up">
+    <div class="veil"></div>
+    <div class="changing-role orange-bullet">
+        <header class="roles-header">Choose new role:</header>
+        <div class="roles-field">
+            @{
+                var roles = logicManager.UserLogic().GetAllRoles();
+                if (roles != null)
+                {
+                    for (var i = 0; i < roles.Count; i++)
+                    {
+                        <label class="role">
+                            <input type="radio" value="@roles[i]" name="roles" />@roles[i]
+                            <span class="current-span">(Current role!)</span>
+                        </label>
+                    }
+                }
+            }
+        </div>
+        <div class="role-controls">
+            <button id="btnChangeRole">Change role</button><!--
+         --><button id="btnCancelChangeRole">Cancel</button>
+        </div>
+    </div>
+</div>

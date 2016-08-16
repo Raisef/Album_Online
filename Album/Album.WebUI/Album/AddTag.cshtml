@@ -1,0 +1,86 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@using System.Data.SqlClient;
+@{
+    Layout = "";
+}
+
+@{
+    if (IsPost)
+    {
+        ILog Log = Logger.Instance.Log();
+
+        LogicManager logicManager;
+        try
+        {
+            logicManager = LogicManager.Instance;
+        }
+        catch (ConfigurationErrorsException ex)
+        {
+            Log.Fatal("Error in configurations", ex);
+            Response.SetStatus(HttpStatusCode.Conflict);
+            return;
+        }
+
+        var albumIdString = Request["albumId"];
+        int albumId;
+        var tagName = Request["tagName"];
+        if (!int.TryParse(albumIdString, out albumId) || albumId <= 0
+            || string.IsNullOrWhiteSpace(tagName))
+        {
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+        }
+        try
+        {
+            var tags = logicManager.TagLogic().GetAll();
+            int targetTag = 0;
+            for (var i = 0; i < tags.Count; i++)
+            {
+                if (tags[i].Name == tagName)
+                {
+                    targetTag = tags[i].Id;
+                    break;
+                }
+                continue;
+            }
+            if (targetTag == 0)
+            {
+                targetTag = logicManager.TagLogic().Create(tagName);
+            }
+            if (logicManager.AppAlbumLogic().AddTag(albumId, targetTag))
+            {
+                <a class="tag-name" href="~/Search/Index?obj=album&tagid=@targetTag">@tagName</a>
+                <button value="@targetTag" class="remove-tag glyphicon glyphicon-remove"></button>
+                return;
+            }
+            else
+            {
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+        }
+        catch (System.IO.IOException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+        }
+        catch (SqlException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+        }
+    }
+}
+
+

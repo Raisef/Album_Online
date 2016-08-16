@@ -1,0 +1,7 @@
+D:\Project\Album\Album.Entities\bin\Debug\Album.Entities.dll
+D:\Project\Album\Album.Entities\bin\Debug\Album.Entities.pdb
+D:\Project\Album\Album.Entities\obj\Debug\Album.Entities.csprojResolveAssemblyReference.cache
+D:\Project\Album\Album.Entities\obj\Debug\Album.Entities.dll
+D:\Project\Album\Album.Entities\obj\Debug\Album.Entities.pdb
+D:\Project\Album\Album.Entities\bin\Debug\log4net.dll
+D:\Project\Album\Album.Entities\bin\Debug\log4net.xml

@@ -1,0 +1,68 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@using System.Data.SqlClient;
+@{
+    Layout = "";
+}
+
+@{
+    if (IsPost)
+    {
+        ILog Log = Logger.Instance.Log();
+
+        LogicManager logicManager;
+        try
+        {
+            logicManager = LogicManager.Instance;
+        }
+        catch (ConfigurationErrorsException ex)
+        {
+            Log.Fatal("Error in configurations", ex);
+            Response.SetStatus(HttpStatusCode.Conflict);
+            return;
+        }
+
+        var idString = Request["id"];
+        var files = Request.Files;
+        int userId;
+        if (!int.TryParse(idString, out userId) || files == null)
+        {
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+        }
+        try
+        {
+            var file = files[0];
+            byte[] imageContent = new byte[file.ContentLength];
+            file.InputStream.Read(imageContent, 0, imageContent.Length);
+            string imageType = file.ContentType;
+            Image avatar = new Image { Content = imageContent, ImageType = imageType };
+            if (logicManager.UserLogic().SetAvatar(userId, avatar))
+            {
+                Response.SetStatus(HttpStatusCode.OK);
+            }
+            return;
+        }
+        catch (System.IO.IOException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+        }
+        catch (SqlException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+        }
+
+    }
+}

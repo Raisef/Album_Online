@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>@Page.Title</title>
+    <link rel="stylesheet" href="~/Content/reset.css">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-theme.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Content/layout-style.css">
+
+    @RenderSection("styles", required: false)
+</head>
+<body>
+    <div class="wrapper">
+    @{
+        if (User.Identity.IsAuthenticated)
+        {
+            <nav class="nav-bar orange-bullet">
+                <ul>
+                    <li class="menu">
+                        <input type="checkbox" id="MenuToggle" class="toggle">
+                        <div class="alter-search"><a class="glyphicon glyphicon-search" href="~/Search/Index"></a></div>
+                        <label for="MenuToggle">
+                            <span class="nick-name">@User.Identity.Name</span><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                        </label>
+                        <ul class="dropdown">
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li><a href="~/Users/AdminUtility">Admin Toolbox</a></li>
+                            }
+                            <li><a href="~/Users/Index?name=@User.Identity.Name">Profile</a></li>
+                            <li><a href="~/LogOut.cshtml">Logout</a></li>
+                        </ul>
+                    </li><!--
+                    --><li class="title"><span>@Page.Title</span></li><!--
+                    --><li class="search"><a class="glyphicon glyphicon-search" href="~/Search/Index"></a></li>
+                </ul>
+            </nav>
+        }
+        else
+        {
+            <nav class="nav-bar black-bullet">
+            </nav>
+        }
+    }
+            @RenderBody()
+    </div>
+    <script src="~/scripts/jquery-3.1.0.min.js"></script>
+    <script src="~/scripts/bootstrap.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

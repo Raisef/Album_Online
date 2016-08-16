@@ -1,0 +1,128 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@{
+    Layout = "";
+}
+@{
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+
+    if (!User.Identity.IsAuthenticated)
+    {
+        Response.SetStatus(HttpStatusCode.Unauthorized);
+        return;
+    }
+
+    var albumIdString = Request["albumId"];
+    int albumId;
+    if (!int.TryParse(albumIdString, out albumId) || albumId <= 0)
+    {
+        Response.Redirect("~");
+    }
+    var imgIdString = Request["imgId"];
+    int imageId;
+    if (!int.TryParse(imgIdString, out imageId))
+    {
+        imageId = 0;
+    }
+
+    AppAlbum album = logicManager.AppAlbumLogic().Get(albumId);
+
+    if (album == null)
+    {
+        Response.SetStatus(HttpStatusCode.BadRequest);
+    }
+
+    Page.Title = album.Name;
+
+    User owner = logicManager.UserLogic().GetByName(album.Owner);
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>@Page.Title</title>
+    <link rel="stylesheet" href="~/Content/reset.css">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="~/Content/imageShow.css" rel="stylesheet" />
+</head>
+<body>
+    <article class="image-show orange-bullet">
+        <a id="home" class="glyphicon glyphicon-home" href="~/Index"></a>
+        <a id="back" class="glyphicon glyphicon-arrow-left" href="~/Album/Index?id=@albumId"></a>
+        <header class="album-title"><span>@album.Name</span></header>
+        <div class="image-container">
+                @{
+                    var images = logicManager.ImageLogic().GetAllByAlbum(album.Id);
+                    if (images != null)
+                    {
+                        
+                        <div class="images">
+                            @for (var i = 0; i < images.Count; i++)
+                            {
+                            <img id="@images[i].Id" class="big-image img-responsive@(images[i].Id==imageId?" current-image":"")" src="~/Images/View?from=image&id=@images[i].Id" />
+                            }
+                            <button id="prevImage"><div></div></button>
+                            <button id="nextImage"><div></div></button>
+                        </div>
+                        
+                        
+                    }
+                }
+            </div>
+        
+            <div class="owner-info orange-bullet">
+                <a class="owner-link" href="~/Users/Index?id=@owner.Id">
+                    <div class="user-avatar">
+                        <img class="img-responsive img-rounded" src="~/Images/View?from=user&id=@owner.Id" />
+                    </div>
+                </a>
+                <a class="owner-link" href="~/Users/Index?name=@owner.Login"><span>@owner.Login</span></a>
+            </div><!--
+         --><div class="rate-image orange-bullet">
+                <div class="rating"></div>
+            @if (User.Identity.Name != album.Owner)
+            {
+                <div class="rate-btn-panel">
+                    <button id="rate1" class="rate-btn glyphicon glyphicon-star" value="1" name="@User.Identity.Name"></button>
+                    <button id="rate2" class="rate-btn glyphicon glyphicon-star" value="2" name="@User.Identity.Name"></button>
+                    <button id="rate3" class="rate-btn glyphicon glyphicon-star" value="3" name="@User.Identity.Name"></button>
+                    <button id="rate4" class="rate-btn glyphicon glyphicon-star" value="4" name="@User.Identity.Name"></button>
+                    <button id="rate5" class="rate-btn glyphicon glyphicon-star" value="5" name="@User.Identity.Name"></button>
+                </div>
+            }
+                
+            </div>
+        
+            @if (User.Identity.Name == album.Owner)
+            {
+                <div class="owner-controls orange-bullet">
+                    <button id="removeImageBtn" class="remove-image-btn glyphicon glyphicon-remove" title="Remove image"></button>
+                    <button id="setTitleImage" class="set-title-btn glyphicon glyphicon-picture" value="@album.TitleImageId" title="Set as album title"></button>
+                </div>
+            }
+        </article>
+
+
+        <script src="~/scripts/jquery-3.1.0.min.js"></script>
+        <script src="~/scripts/bootstrap.min.js"></script>
+        <script src="~/scripts/imageShow.js"></script>
+</body>
+</html>

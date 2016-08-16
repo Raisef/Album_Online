@@ -1,0 +1,369 @@
+﻿*{
+    box-sizing:border-box;
+}
+
+.incorrect-input{
+    position:absolute;
+    top: 90px;
+    left:0; right: 0;
+    color: red;
+    display:none;
+}
+
+.danger-input{
+    border-color:#ff8d8d;
+    background-color:#ffc5c5;
+}
+
+#home{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 45px;
+    width: 40px;
+    height: 39px;
+    text-align:center;
+    line-height:2.7;
+    text-decoration: none;
+    color: black;
+    border-bottom: 3px solid #5d5c5c;
+}
+
+#home:hover{
+    background-color: #f48300;
+}
+
+.searching{
+    width:100%;
+    min-width: 260px;
+}
+
+.search-control{
+    width: 100%;
+    min-width: 260px;
+}
+
+.search-control>li{
+    width:30%;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.search-control>li.active{
+    background-color:white;
+}
+
+.search-control>li>a{
+    width:100%;
+    border: 1px solid rgb(221, 221, 221);
+    border-bottom: none;
+    cursor: pointer;
+    color: black;
+}
+
+.searching-users{
+    display: none;
+}
+
+.searching-albums{
+    display: none;
+}
+
+.search-results{
+    height:100%;
+}
+
+.user-cell{
+    width:100%;
+    height: 150px;
+    position:relative;
+    background:white;
+    box-shadow: 0 2px 30px rgb(39, 39, 39);
+    margin: 15px 0;
+}
+
+.user-info{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    float:right;
+    width: 60%;
+    text-align:center;
+}
+
+.user-avatar{
+    height:100%;
+    position:relative;
+    width: 40%;
+    float:left;
+    
+}
+
+.user-avatar>a>img{
+    display: block;
+    opacity: inherit;
+    position:absolute;
+    top:0; bottom: 0; right:auto; left:0;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+    
+}
+
+.user-name>a{
+    text-decoration:none;
+    color:black;
+    font-size: 2.2em;
+    margin-top: 20px;
+}
+
+.user-name > a:hover {
+    color: orange;
+}
+
+.albums-count{
+    display:block;
+    font-size:2em;
+}
+
+.images-count{
+    font-size: 1.5em;
+}
+
+.album-cell{
+    width:100%;
+    height: 250px;
+    position:relative;
+    background:rgba(0, 0, 0, 1);
+    border-top: 2px solid rgb(128, 128, 128);
+}
+
+album-title{
+    display:block;
+    height:100%;
+}
+
+.album-title>img{
+    display: block;
+    opacity: inherit;
+    position:absolute;
+    top:0; bottom: 0; right: 0; left:0;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+}
+
+.album-info{
+    position:absolute;
+    bottom:0;
+    background-color: rgba(0, 0, 0, 0.58);
+    width:100%;
+    overflow-y:hidden;
+    color:rgba(254, 243, 195, 0.88);
+    max-height: 110px;
+    padding: 3px;
+}
+
+.album-info a{
+    color: orange;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.album-tags{
+    display: none;
+}
+
+.album-info:hover{
+    overflow-y:auto;
+    max-height: 93px;
+}
+
+.album-info:hover>.album-tags{
+    display:block;
+}
+
+.album-info>.user-name>a{
+    font-size:1em;
+}
+
+.user-name{
+    display: block;
+    color: rgba(254, 243, 195, 0.88);
+}
+
+.album-name{
+    display: block;
+    color: rgba(254, 243, 195, 0.88);
+    font-size: 1.4em;
+}
+
+.input-field{
+    width: 100%;
+    padding: 25px 5px 5px;
+    min-height: 150px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-align: center;
+    font-size:1.05em;
+    margin-bottom: 15px;
+    border-bottom: 3px solid rgb(51, 51, 51);
+}
+
+.input-field>label{
+    display: block;
+    font-weight: 100;
+}
+
+.input-field>input{
+    display:block;
+    width:250px;
+    margin:10px auto;
+}
+
+.by-name{
+    display:none;
+}
+
+.by-tag{
+    display: none;
+}
+
+.show-block{
+    display:block;
+}
+
+.show-span{
+    display:inline;
+}
+
+.start-searching{
+    background:none;
+    border: 1px solid rgba(255, 165, 0, 0.00);
+    box-shadow: 0 1px 13px rgba(0,0,0,0.2);
+    transition: all .6s;
+}
+
+.start-searching:hover{
+    border: 1px solid rgba(255, 165, 0, 1);
+}
+
+.search-toggle{
+    vertical-align: top;
+    margin: 0 3px 0 0;
+    width: 17px;
+    height: 17px;
+    display:none;
+}
+
+.search-toggle + label{
+    cursor: pointer;
+    display: inline-block;
+    width:110px;
+    height:20px;
+    margin: 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.search-toggle:not(checked) {
+    position: absolute;
+    display:none;
+}
+
+.search-toggle:not(checked) + label{
+    position: relative;
+    padding: 0 0 0 60px;
+}
+
+.search-toggle:not(checked) + label:before{
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 50px;
+    height: 26px;
+    border-radius:0px;
+    background: #f1f1f1;
+    box-shadow: inset 0 2px 3px rgba(0,0,0,.2);
+}
+
+.search-toggle:not(checked) + label:after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    background: orange;
+    box-shadow: 0 2px 5px rgba(0,0,0,.3);
+    transition: all .2s;
+}
+
+.search-toggle:checked + label:after {
+  left: 26px;
+}
+
+.all-tags{
+    width:100%;
+    height:100%;
+    text-align:center;
+    display: none;
+    padding-top: 40px;
+}
+
+.all-tags.show-block{
+    display:block;
+}
+
+.tag-span{
+    display:inline-block;
+}
+
+.common-screen{
+    text-align: center;
+    margin-top: 40px;
+    font-weight: 600;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    display:none;
+}
+
+@media(min-width:381px) {
+    #home {
+        left: 0;
+    }
+
+    .album-cell {
+        height: 300px;
+    }
+
+    .user-cell{
+        width: 250px;
+        display: inline-block;
+        border-radius: 2px;
+        margin: 5px;
+    }
+
+    .user-avatar > a > img {
+        padding-left: 5px;
+    }
+}
+
+@media(min-width:550px){
+    .search-results {
+        margin: 10px
+    }
+}
+
+@media(min-width:625px) {
+    .search-results{
+        margin: 10px 5px 10px 30px;
+        text-align:left;
+    }
+
+    .album-cell{
+        height: 290px;
+        width:310px;
+        display:inline-block;
+    }
+}
+
+@media(min-width:1021px){
+}

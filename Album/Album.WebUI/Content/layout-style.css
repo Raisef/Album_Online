@@ -1,0 +1,240 @@
+﻿*{
+    box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.nav-bar{
+    width: 100%;
+    height: 40px;
+    margin: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    min-width: 260px;
+}
+
+.wrapper{
+    position:relative;
+    height:100%;
+    max-height: 100%;
+}
+
+.nav-bar>ul{
+    width: 100%;
+    height: 100%;
+}
+
+.nav-bar>ul>li{
+    height: 100%;
+    display: inline-block;
+    width: 50%;
+    margin: 0;
+    text-align: center;
+    line-height: 2.9;
+}
+
+.nav-bar>ul>li:first-child{
+    width: 25%;
+    text-align: left;
+}
+
+.nav-bar>ul>li:last-child{
+    text-align: right;
+    width: 25%;
+    position:relative;
+}
+
+.nav-bar>ul>.title{
+    font-family: cursive;
+    font-weight: 600;
+}
+
+.menu>label{
+    display: inline-block;
+    width: 45px;
+    height: 100%;
+    padding-left: 15px;
+}
+
+.alter-search{
+    display:none;
+}
+
+.menu>label>span.nick-name{
+    display: none;
+}
+
+.nav-bar>ul>li>input.toggle{
+    display: none;
+}
+
+.nav-bar>ul>li>label:hover{
+    cursor: pointer;    
+}
+
+.menu>.dropdown{
+    position:absolute;
+    display: none;
+    width: 100%;
+    margin: 0;
+    left:0;
+    right: 0;
+    top:40px;
+    z-index: 1;
+}
+
+input.toggle:checked ~ .dropdown{
+    display: list-item;
+}
+
+.orange-bullet input.toggle:checked + label{
+    background-color: #413c3c;
+    color: white;
+}
+
+.menu>.dropdown a{
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 7px 15px;    
+}
+
+.orange-bullet{
+    background-color: orange;
+    border-bottom: 4px solid #5d5c5c;
+}
+
+.orange-bullet>ul>li>a {
+    text-decoration: none;
+    color: black;
+    width: 45px;
+    height: 100%;
+    top: 0;
+    padding: 11px 15px;
+}
+
+.orange-bullet>ul>li>button{
+    border: none;
+    background: none;
+}
+
+.orange-bullet>ul>.menu>.dropdown{
+    background-color: #413c3c;
+}
+
+.orange-bullet>ul>.menu>label:hover{
+    background-color: #f48300;
+}
+
+
+.orange-bullet>ul>.search>a:hover{
+    background-color: #f48300;
+}
+
+.orange-bullet input.toggle:checked + label:hover{
+    background-color: #413c3c;
+}
+
+.orange-bullet>ul>.menu>.dropdown li:hover{
+    background-color:gray;
+}
+
+.orange-bullet>ul>.menu>.dropdown a{
+    text-decoration: none;
+    color: white;
+}
+
+.black-bullet{
+    background-color:black;
+    border-bottom: 4px solid white;
+}
+@media (min-width: 381px){
+    
+    .nav-bar>ul>li.title{
+        width: 100%;
+        line-height: 2;
+        font-size:1.3em;
+    }
+    
+    .nav-bar>ul>li:first-child{
+        display: inline;
+        position: absolute;
+        padding-left: 0;
+        right: 0;
+        height: 40px;
+        border-bottom: 4px solid #5d5c5c;
+        text-align: right;
+        width: auto;
+    }
+    
+    .nav-bar>ul>.search>a{
+        width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .menu>label{
+        width: 100%;
+        padding-right: 15px;
+        padding-left: 0;
+    }
+    
+    .menu>label>span{
+        padding-left:5px;
+    }
+    
+    .alter-search{
+        position:absolute;
+        display: inline-block;
+        color: black;
+        text-decoration: none;
+        left: -45px;
+        width: 45px;
+        height: 40px;
+        text-align:center;
+        line-height: normal;
+        top: -1px;
+    }
+
+    .alter-search>a{
+        width:100%;
+        height: 100%;
+        padding-top:12px;
+        text-decoration: none;
+        color:black;
+        border-bottom: 4px solid #5d5c5c;
+    }
+
+    .alter-search>a:hover{
+        background-color:#f48300;
+    }
+
+    .menu>label>span.nick-name{
+        display: inline;
+    }
+    
+    .menu>.dropdown{
+        left:auto;
+        width: 175px;
+    }
+    
+    .nav-bar>ul>li:last-child{
+        width: 45px;
+        height: 40px;
+        position: absolute;
+        display: none;
+        top: 0;
+        right: 85px;
+        text-align: center;
+        padding-right: 0;
+    }
+    
+    .orange-bullet>ul>.search{
+        border-bottom: 4px solid #5d5c5c;
+    }
+}
+

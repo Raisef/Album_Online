@@ -1,0 +1,162 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+
+@{
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+
+    if (!User.Identity.IsAuthenticated)
+    {
+        Response.SetStatus(HttpStatusCode.Unauthorized);
+        return;
+    }
+
+    var idString = Request["id"];
+    int id;
+    var name = Request["name"];
+    if ((!int.TryParse(idString, out id) || id <= 0) && string.IsNullOrWhiteSpace(name))
+    {
+        Response.SetStatus(HttpStatusCode.BadRequest);
+        return;
+    }
+    User user = null;
+    if(id > 0)
+    {
+        user = logicManager.UserLogic().GetById(id);
+    }
+    else
+    {
+        user = logicManager.UserLogic().GetByName(name);
+    }
+
+    if (user == null)
+    {
+        Response.SetStatus(HttpStatusCode.BadRequest);
+        return;
+    }
+
+    Page.Title = "Profile";
+
+    var imagesCount = logicManager.ImageLogic().GetCountByUser(user.Id);
+    var albumsCount = logicManager.AppAlbumLogic().GetCountByUser(user.Id);
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/Content/users.css" />
+}
+
+@section scripts{
+    <script src="~/scripts/users.js"></script>
+}
+
+<a id="home" href="~/Index" class="glyphicon glyphicon-home"></a>
+
+<article class="user-field">
+    <div class="user-column">
+        <div class="user-avatar">
+            <img class="img-responsive" src="~/Images/View?from=user&id=@user.Id" />
+            @if (User.Identity.Name == user.Login)
+            {
+                <button id="setUserAvatar" value="@user.Id">Set avatar</button>
+            }
+        </div><!--
+     --><div class="change-pass"><button id="changePassBtn" value="@user.Id">Change Password</button></div><!--             
+     --><div class="user-info">
+            <span class="user-name">@user.Login</span>
+            <span class="albums-count">Albums: @albumsCount</span>
+            <span class="images-count">Images: @imagesCount</span>
+        </div>
+    </div>
+    <div class="user-albums">
+        <header class="albums-header">Albums</header>
+        @{
+            List<AppAlbum> albums = logicManager.AppAlbumLogic().GetAllByUser(user.Id);
+
+            if (albums != null && albums.Count > 0)
+            {
+                for (int i = 0; i < albums.Count; i++)
+                {
+                    <div id="@albums[i].Id" class="album-cell">
+                        <a class="album-title" href="~/Album/Index?id=@albums[i].Id">
+                            <img src="~/Images/View?from=image&id=@albums[i].TitleImageId" class="img-responsive" />
+                        </a>
+                        <div class="album-info">
+                            <span class="album-name">
+                                Album: <a href="~/Album/Index?id=@albums[i].Id">@albums[i].Name</a>
+                            </span>
+                            <span class="album-count">Images: @albums[i].Count</span>
+                            <div class="album-tags">
+                                <span>Tags: </span>
+                                @if(albums[i].Tags != null)
+                                {
+                                    var tags = albums[i].Tags;
+                                    for (var j = 0; j < tags.Count; j++)
+                                    {
+                                        <a href="~/Search/Index?obj=album&tagid=@tags[j].Id">@tags[j].Name</a>if(j != tags.Count - 1) { <span class="comma">,</span> }
+                                    }
+                                }
+                            </div>
+                            
+                        </div>
+                    </div>
+                }
+            }
+        }
+    </div>
+</article>
+
+<div class="pop-up">
+    <div class="veil"></div>
+    <div class="adding-images orange-bullet">
+        <form class="upload-field" action="~/Images/UploadingImages.cshtml" method="POST" enctype="multipart/form-data">
+            <input id="hiddenAlbumId" type="hidden" name="albumId" value="0" />
+            <label id="uploader"><input type="file" name="uploaded" accept="image/*"/><i class="glyphicon glyphicon-plus-sign"></i></label>
+        </form>
+        <div class="uploaded-field"></div>
+        <div class="upload-controls">
+            <button id="btnUpload" class="glyphicon glyphicon-ok"></button><!--
+         --><button id="btnCancelUpload" class="glyphicon glyphicon-remove"></button>
+        </div>
+    </div>
+    <div class="changing-pass orange-bullet">
+        <header class="changing-pass-header">Changing password</header>
+        <div class="input-field">
+            <label for="oldPass">Type your old password:</label>
+            <input id="oldPass" type="password" name="albumName" />
+            <div id="alert-password" class="input-alert"><span>At least four characters!</span></div>
+        </div>
+        <div class="input-field">
+            <label for="newPassword">
+                New password
+                <i class="reg-info glyphicon glyphicon-info-sign" title="At least four characters."></i>
+            </label>
+            <input id="newPass" type="password" name="password">
+            <div id="alert-password" class="input-alert"><span>At least four characters!</span></div>
+        </div>
+        <div class="input-field">
+            <label for="passConfirm">Confirm Password</label>
+            <input id="passConfirm" type="password">
+            <div id="alert-confirm" class="input-alert"><span>Passwords must be the same!</span></div>
+        </div>
+        <div class="change-controls">
+            <button id="btnChangePass">Change</button><!--
+         --><button id="btnCancelChange">Cancel</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,147 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+
+@{
+    Page.Title = "Album Online";
+
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+    User currentUser = logicManager.UserLogic().GetByName(User.Identity.Name);
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/Content/albums.css" />
+    <link href="~/Content/images.css" rel="stylesheet" />
+}
+
+@section scripts{
+    <script src="~/scripts/albums.js"></script>
+    <script src="~/scripts/imageUpload.js"></script>
+}
+
+@{
+    if (!User.Identity.IsAuthenticated)
+    {
+        Response.SetStatus(HttpStatusCode.Unauthorized);
+    }
+    else
+    {
+        
+        <button id="createAlbumBtn" class="glyphicon glyphicon-plus" value="@currentUser.Id">Create Album</button>
+        <article class="user-albums">
+            @{
+                List<AppAlbum> albums = logicManager.AppAlbumLogic().GetAllByUser(currentUser.Id);
+
+                if (albums != null && albums.Count > 0)
+                {
+                    for (int i = 0; i < albums.Count; i++)
+                    {
+                        <div id="@albums[i].Id" class="album-cell">
+                            <a class="album-title" href="~/Album/Index?id=@albums[i].Id">
+                                <img src="~/Images/View?from=image&id=@albums[i].TitleImageId" class="img-responsive" />
+                            </a>
+                            <div class="album-info">
+                                <span class="album-name">
+                                    Album: <a href="~/Album/Index?id=@albums[i].Id">@albums[i].Name</a>
+                                </span>
+                                <span class="album-count">Images: @albums[i].Count</span>
+                                <div class="album-tags">
+                                    Tags:
+                                    @if (albums[i].Tags != null)
+                                    {
+                                        var tags = albums[i].Tags;
+                                        for (var j = 0; j < tags.Count; j++)
+                                        {
+                                            <a class="tag-name" href="~/Search/Index?obj=album&tagid=@tags[j].Id">@tags[j].Name</a><button value="@tags[j].Id" class="remove-tag glyphicon glyphicon-remove" title="Remove tag"></button>if (j != tags.Count - 1)
+                                            { <span class="comma">,</span> }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="no-tags">No tags yet.</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="btn-group" role="group" aria-label="album-conrol">
+                                <button value="@albums[i].Id" type="button" class="btn btn-xs add-images-btn glyphicon glyphicon-plus" title="Add photo"></button>
+                                <button value="@albums[i].Id" type="button" class="btn btn-xs rename-album-btn glyphicon glyphicon-pencil" title="Rename album"></button>
+                                <button value="@albums[i].Id" type="button" class="btn btn-xs add-tag-btn glyphicon glyphicon-tent" title="Add tag"></button>
+                                <button value="@albums[i].Id" type="button" class="btn btn-xs delete-album-btn glyphicon glyphicon-remove" title="Delete album"></button>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+
+        </article>
+                <div class="pop-up">
+                    <div class="veil"></div>
+                    <div class="adding-images orange-bullet">
+                        <form class="upload-field" action="~/Images/UploadingImages.cshtml" method="POST" enctype="multipart/form-data">
+                            <input id="hiddenAlbumId" type="hidden" name="albumId" value="0" />
+                            <label id="uploader"><input type="file" name="uploaded" accept="image/*" multiple /><i class="glyphicon glyphicon-plus-sign"></i></label>
+                        </form>
+                        <div class="uploaded-field"></div>
+                        <div class="upload-controls">
+                            <button id="btnUpload" class="glyphicon glyphicon-ok"></button><!--
+                         --><button id="btnCancelUpload" class="glyphicon glyphicon-remove"></button>
+                        </div>
+                    </div>
+                    <div class="creating-album pop-up-input orange-bullet">
+                        <header class="creating-album-header">Create new album</header>
+                        <div class="input-field">
+                            <label for="newAlbumName">Type name:</label>
+                            <input id="newAlbumName" type="text" name="albumName" />
+                            <div class="incorrect incorrect-input">New album need a name!</div>
+                            <div class="incorrect incorrect-name">This album aready exists!</div> 
+                        </div>
+                        <div class="input-controls">
+                            <button id="btnCreateNewAlbum">Create</button><!--
+                         --><button id="btnCreateCancel">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="renaming-album pop-up-input">
+                        <header class="renaming-album-header">Rename album</header>
+                        <div class="input-field">
+                            <label for="reName">Type name:</label>
+                            <input id="reName" type="text" name="albumName" />
+                            <div class="incorrect incorrect-input">Type something if you want to rename!</div>
+                            <div class="incorrect incorrect-name">That name aready in use!</div>
+                        </div>
+                        <div class="input-controls">
+                            <button id="btnRenameAlbum">Rename</button><!--
+                         --><button id="btnCancelRename">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="adding-tag pop-up-input">
+                        <header class="adding-tag-header">Add a tag</header>
+                        <div class="input-field">
+                            <label for="newTag">Type name:</label>
+                            <input id="newTag" type="text" name="albumName" />
+                            <div class="incorrect incorrect-input">Type something you want to add!</div>
+                            <div class="incorrect incorrect-name">The album aready have this tag!</div>
+                        </div>
+                        <div class="input-controls">
+                            <button id="btnAddTag">Add Tag</button><!--
+                         --><button id="btnCancelAddingTag">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                }
+}

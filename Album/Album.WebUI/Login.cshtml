@@ -1,0 +1,123 @@
+﻿@using Album.LogicContracts;
+@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Data.SqlClient;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@{
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+
+    if (IsAjax)
+    {
+        var userLogin = Request["Login"];
+        var userPass = Request["Pass"];
+        if (string.IsNullOrWhiteSpace(userLogin) || string.IsNullOrWhiteSpace(userPass))
+        {
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+        }
+        try
+        {
+            var user = logicManager.UserLogic().SignIn(userLogin, userPass);
+            if (user != null)
+            {
+                FormsAuthentication.SetAuthCookie(user.Login, false);
+                Response.SetStatus(HttpStatusCode.OK);
+                return;
+            }
+            else
+            {
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+        }
+        catch (System.IO.IOException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            throw;
+        }
+        catch (SqlException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            throw;
+        }
+        catch (InvalidOperationException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            throw;
+        }
+    }
+
+
+    var returnUrl = Request["ReturnUrl"];
+
+    if (User.Identity.IsAuthenticated)
+    {
+        Response.Redirect(returnUrl??"");
+    }
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/Content/login.css">
+}
+
+@section scripts{
+    <script src="scripts/login.js"></script>
+}
+
+<article class="login-container orange-bullet">
+
+    <div class="login-content">
+        <div class="text-area"></div>
+        <div class="header-area"></div>
+        <h1>Album online</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus congue sodales libero in bibendum. Ut blandit rutrum interdum. Aenean ullamcorper, orci in interdum vestibulum, libero diam vestibulum orci, eget volutpat justo dui id dui. Nunc felis orci, mollis ut tortor ac, aliquet iaculis orci. Praesent ullamcorper tristique lacus vitae hendrerit. Donec id maximus orci, nec imperdiet tortor.</p>
+    </div>
+    <!--
+    -->
+    <div class="login-form">
+        <form action="/Login" method="POST">
+            <input id="returnUrl" type="hidden" name="ReturnUrl" value="@returnUrl" />
+            <div class="incorrect-input">
+                <span id="loginIncorrect">Login is incorrect!</span>
+                <span id="passIncorrect">Password is incorrect!</span>
+                <span id="bothIncorrect">Login and password are incorrect!</span>
+                <span id="badSignIn">You have entered the wrong data!</span>
+
+            </div>
+            <div class="input-field">
+                <label for="login">
+                    <span>Login</span>
+                </label>
+                <input id="login" type="text" name="login">
+            </div>
+            <div class="input-field">
+                <label for="password">
+                    <span>Password</span>
+                </label>
+                <input id="password" type="password" name="password">
+            </div>
+            <div class="login-controls">
+                <button id="btnLogin" class="btn" type="button">Sign In</button>
+                <a href="~/SignUp.cshtml">No account yet? Sign Up Now!</a>
+            </div>
+        </form>
+    </div>
+    <!--
+    -->
+</article>

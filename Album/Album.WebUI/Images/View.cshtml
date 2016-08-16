@@ -1,0 +1,116 @@
+﻿@using Album.LogService;
+@using log4net;
+@using Album.Entities;
+@using Album.WebUI.Models;
+@using System.Configuration;
+@using System.Data.SqlClient;
+
+@{
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+    var from = Request["from"];
+    var stringId = Request["id"];
+    int id;
+    if (string.IsNullOrWhiteSpace(stringId) || !int.TryParse(stringId, out id))
+    {
+        Response.SetStatus(HttpStatusCode.BadRequest);
+        return;
+    }
+
+    Image image = null;
+
+    switch (from)
+    {
+        case "user":
+            try
+            {
+                if (id <= 0)
+                {
+                    Response.SetStatus(HttpStatusCode.BadRequest);
+                    return;
+                }
+                image = logicManager.UserLogic().GetAvatar(id);
+                if(image == null)
+                {
+                    Response.ContentType = "image/gif";
+                    Response.WriteFile("~/Content/Images/user-default.gif");
+                    Response.AddHeader("Content - Disposition", $"inline; filename =\"noimage.gif\"");
+                    break;
+                }
+                break;
+            }
+            catch (System.IO.IOException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+            catch (SqlException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+
+        case "image":
+            try
+            {
+                image = logicManager.ImageLogic().Get(id);
+                if (image == null)
+                {
+                    Response.ContentType = "image/jpg";
+                    Response.WriteFile("~/Content/Images/album-default.jpg");
+                    Response.AddHeader("Content - Disposition", $"inline; filename =\"noimage.jpg\"");
+                    break;
+                }
+                break;
+            }
+            catch (System.IO.IOException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+            catch (SqlException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+        default:
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+    }
+
+    if (image == null || image.Content == null)
+    {
+        Response.SetStatus(HttpStatusCode.NotFound);
+        return;
+    }
+
+    Response.WriteBinary(image.Content, image.ImageType);
+    Response.AddHeader("Content-Disposition", $"inline; filename=\"{image.Id}\"");
+}

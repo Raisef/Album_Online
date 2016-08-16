@@ -1,0 +1,207 @@
+﻿*{
+    box-sizing:border-box;
+}
+
+#home{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 45px;
+    width: 40px;
+    height: 39px;
+    text-align:center;
+    line-height:2.7;
+    text-decoration: none;
+    color: black;
+    border-bottom: 3px solid #5d5c5c;
+}
+
+#home:hover{
+    background-color: #f48300;
+}
+
+.user-cell{
+    width:100%;
+    height: 160px;
+    position:relative;
+    background:white;
+    box-shadow: 0 2px 30px rgb(39, 39, 39);
+    margin: 15px 0;
+    min-width: 260px;
+}
+
+.user-info{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    float:right;
+    width: 60%;
+    text-align:center;
+    position: relative;
+    height: 100%;
+}
+
+.user-avatar{
+    height:100%;
+    position:relative;
+    width: 40%;
+    float:left;
+    
+}
+
+.user-avatar>a>img{
+    display: block;
+    opacity: inherit;
+    position:absolute;
+    top:0; bottom: 0; right:auto; left:0;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+}
+
+.user-name>a{
+    text-decoration:none;
+    color:black;
+    font-size: 2.3em;
+    margin-top: 20px;
+}
+
+.user-name > a:hover {
+    color: orange;
+}
+
+.albums-count{
+    display:block;
+    font-size:2em;
+}
+
+.images-count{
+    font-size: 1.5em;
+}
+
+.controls{
+    height:28px;
+    position:absolute;
+    bottom: 3px;
+    right: 0; left: 0;
+}
+
+.controls>button{
+    height: 100%;
+    background:none;
+    border: 1px solid;
+}
+
+.pop-up{
+    display:none;    
+}
+
+.veil{
+    position:fixed;
+    top: 0; bottom: 0; right: 0; left: 0;
+    background-color: gray;
+    opacity: 0.7;    
+}
+
+.changing-role{
+    display: none;
+    top: 80px;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    padding-bottom: 35px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.roles-header{
+    border-bottom: 2px solid;
+    text-align:center;
+    font-size: 2em;
+    margin-bottom: 30px;
+}
+
+.role{
+    display: block;
+    margin: 10px auto;
+    width: 160px;
+}
+
+.role:last-child{
+    margin-bottom: 30px;
+}
+
+.current-span{
+    display: none;
+}
+
+.current-role{
+    color: lightgray;
+}
+
+.current-role>.current-span{
+    display:inline;
+}
+
+.role-controls{
+    position: absolute;
+    bottom:0;
+    width: 100%;
+    height: 35px;
+}
+
+.role-controls>button{
+    width: 50%;
+    height: 100%;
+    background: none;
+    border: none;
+    border-top: 2px solid;
+}
+
+.role-controls>button:last-child{
+    border-left: 2px solid;
+}
+
+.orange-bullet>header{
+    border-bottom-color: orange;
+}
+
+.orange-bullet>.role-controls>button:hover{
+    background-color:cornsilk;
+}
+
+.show-block{
+    display:block;
+}
+@media(min-width:381px) {
+    #home {
+        left: 0;
+    }
+
+    .admin-toolbox {
+        text-align: center;
+        margin: 10px 5px 10px 30px;
+    }
+
+     .user-cell{
+        width: 250px;
+        display: inline-block;
+        border-radius: 2px;
+        margin: 5px;
+    }
+
+    .user-avatar > a > img {
+        padding-left: 5px;
+    }
+}
+
+@media(min-width:550px) {
+    .admin-toolbox {
+        text-align:left;
+    }
+
+    .controls {
+        display:none;
+    }
+
+    .user-cell:hover>.user-info>.controls{
+        display: block;
+    }
+}

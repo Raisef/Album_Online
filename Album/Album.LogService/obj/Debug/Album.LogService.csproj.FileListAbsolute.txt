@@ -1,0 +1,7 @@
+D:\Project\Album\Album.LogService\bin\Debug\Album.LogService.dll
+D:\Project\Album\Album.LogService\bin\Debug\Album.LogService.pdb
+D:\Project\Album\Album.LogService\bin\Debug\log4net.dll
+D:\Project\Album\Album.LogService\bin\Debug\log4net.xml
+D:\Project\Album\Album.LogService\obj\Debug\Album.LogService.csprojResolveAssemblyReference.cache
+D:\Project\Album\Album.LogService\obj\Debug\Album.LogService.dll
+D:\Project\Album\Album.LogService\obj\Debug\Album.LogService.pdb

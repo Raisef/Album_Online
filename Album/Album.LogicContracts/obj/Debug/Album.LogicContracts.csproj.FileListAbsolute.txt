@@ -1,0 +1,9 @@
+D:\Project\Album\Album.LogicContracts\bin\Debug\Album.LogicContracts.dll
+D:\Project\Album\Album.LogicContracts\bin\Debug\Album.LogicContracts.pdb
+D:\Project\Album\Album.LogicContracts\bin\Debug\Album.Entities.dll
+D:\Project\Album\Album.LogicContracts\bin\Debug\Album.Entities.pdb
+D:\Project\Album\Album.LogicContracts\obj\Debug\Album.LogicContracts.csprojResolveAssemblyReference.cache
+D:\Project\Album\Album.LogicContracts\obj\Debug\Album.LogicContracts.dll
+D:\Project\Album\Album.LogicContracts\obj\Debug\Album.LogicContracts.pdb
+D:\Project\Album\Album.LogicContracts\bin\Debug\log4net.dll
+D:\Project\Album\Album.LogicContracts\bin\Debug\log4net.xml

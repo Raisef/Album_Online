@@ -1,0 +1,349 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@using System.Data.SqlClient;
+
+@{
+    if (IsAjax)
+    {
+        Layout = "";
+    }
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+
+    if (!User.Identity.IsAuthenticated)
+    {
+        Response.SetStatus(HttpStatusCode.Unauthorized);
+        return;
+    }
+    List<User> users = null;
+    List<AppAlbum> albums = null;
+    var obj = Request["obj"];
+    if (!string.IsNullOrWhiteSpace(obj) || IsPost)
+    {
+        switch (obj)
+        {
+            case "user":
+                {
+                    var userNamePath = Request["userName"];
+
+                    if (string.IsNullOrWhiteSpace(userNamePath))
+                    {
+                        Response.SetStatus(HttpStatusCode.BadRequest);
+                        return;
+                    }
+                    try
+                    {
+                        users = logicManager.UserLogic().GetAllByNamePath(userNamePath);
+                    }
+                    catch (System.IO.IOException ex)
+                    {
+                        Log.Fatal("Fatal error on adding tag.", ex);
+                        Response.SetStatus(HttpStatusCode.InternalServerError);
+                        return;
+                    }
+                    catch (SqlException ex)
+                    {
+                        Log.Fatal("Fatal error on adding tag.", ex);
+                        Response.SetStatus(HttpStatusCode.InternalServerError);
+                        return;
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        Log.Fatal("Fatal error on adding tag.", ex);
+                        Response.SetStatus(HttpStatusCode.InternalServerError);
+                        return;
+                    }
+                    if (IsAjax)
+                    {
+                        if (users != null)
+                        {
+                            for (var i = 0; i < users.Count; i++)
+                            {
+                                var albumsCount = logicManager.AppAlbumLogic().GetCountByUser(users[i].Id);
+                                var imagesCount = logicManager.ImageLogic().GetCountByUser(users[i].Id);
+                                <div class="user-cell">
+                                    <div class="user-avatar">
+                                        <a href="~/Users/Index?id=@users[i].Id">
+                                            <img src="~/Images/View?from=user&id=@users[i].Id" />
+                                        </a>
+                                    </div>
+                                    <div class="user-info">
+                                        <span class="user-name">
+                                            <a href="~/Users/Index?id=@users[i].Id">@users[i].Login</a>
+                                        </span>
+                                        <span class="albums-count">Albums: @albumsCount</span>
+                                        <span class="images-count">Images: @imagesCount</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        return;
+                    }
+                    break;
+                }
+            case "album":
+                {
+                    var albumNamePath = Request["albumName"];
+                    var tagName = Request["tagName"];
+                    var tagIdString = Request["tagId"];
+                    int tagId;
+
+                    if ((!int.TryParse(tagIdString, out tagId) || tagId <= 0) && string.IsNullOrWhiteSpace(tagName) && string.IsNullOrWhiteSpace(albumNamePath))
+                    {
+                        Response.SetStatus(HttpStatusCode.BadRequest);
+                        return;
+                    }
+                    else if (string.IsNullOrWhiteSpace(albumNamePath) && string.IsNullOrWhiteSpace(tagName) && tagId > 0)
+                    {
+                        try
+                        {
+                            albums = logicManager.AppAlbumLogic().GetAllByTag(tagId);
+                        }
+                        catch (System.IO.IOException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                        catch (SqlException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                    }
+                    else if (!string.IsNullOrWhiteSpace(albumNamePath) && string.IsNullOrWhiteSpace(tagName) && tagId < 0)
+                    {
+                        try
+                        {
+                            albums = logicManager.AppAlbumLogic().GetAllByAlbumName(albumNamePath);
+                        }
+                        catch (System.IO.IOException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                        catch (SqlException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            albums = logicManager.AppAlbumLogic().GetAllByTagName(tagName);
+                        }
+                        catch (System.IO.IOException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                        catch (SqlException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                        catch (InvalidOperationException ex)
+                        {
+                            Log.Fatal("Fatal error on adding tag.", ex);
+                            Response.SetStatus(HttpStatusCode.InternalServerError);
+                            return;
+                        }
+                    }
+                    if (IsAjax)
+                    {
+                        if (albums != null)
+                        {
+                            for (var i = 0; i < albums.Count; i++)
+                            {
+                                <div class="album-cell">
+                                    <a class="album-title" href="~/Album/Index?id=@albums[i].Id">
+                                        <img src="~/Images/View?from=image&id=@albums[i].TitleImageId" />
+                                    </a>
+                                    <div class="album-info">
+                                        <span class="album-name">
+                                            Album: <a href="~/Album/Index?id=@albums[i].Id">@albums[i].Name</a>
+                                        </span>
+                                        <span class="user-name">
+                                            Owner: <a href="~/Users/Index?name=@albums[i].Owner">@albums[i].Owner</a>
+                                        </span>
+                                        <span class="album-count">Images: @albums[i].Count</span>
+                                        <div class="album-tags">
+                                            <span>Tags: </span>
+                                            @if (albums[i].Tags != null)
+                                            {
+                                                var albumTags = albums[i].Tags;
+                                                for (var j = 0; j < albumTags.Count; j++)
+                                                {
+                                                    <a href="~/Search/Index?obj=album&tagid=@albumTags[j].Id">@albumTags[j].Name</a>if (j != albumTags.Count - 1)
+                                                    { <span class="comma">,</span> }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        return;
+                    }
+                    break;
+                }
+            default:
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+        }
+    }
+
+    Page.Title = "Search";
+}
+
+@section styles{
+     <link href="~/Content/search.css" rel="stylesheet" />
+}
+
+@section scripts{
+    <script src="~/scripts/search.js"></script>
+}
+
+<a id="home" href="~/Index" class="glyphicon glyphicon-home"></a>
+
+<article class="searching">
+        <ul class="nav nav-tabs search-control">
+            <li role="presentation"><a id="searchUsers">Users</a></li>
+            <li role="presentation"><a id="searchAlbums">Albums</a></li>
+            <li role="presentation"><a id="allTags">All tags</a></li>
+        </ul>
+    @if (users == null && albums == null)
+    {
+        <div class="common-screen show-block">
+            <span>Choose, what are you want to find?</span>
+        </div>
+    }
+    
+    <div class="searching-users">
+        <div class="input-field">
+            <span class="incorrect-input">You must type something!</span>
+            <label for="userName">Type a user name in whole or in part:</label>
+            <input id="userName" type="text" name="userName" />
+            <button class="start-searching" value="users">Search</button>
+        </div>
+        <div class="search-results">
+            @if(users != null)
+            {
+                for(var i = 0; i < users.Count; i++)
+                {
+                    var albumsCount = logicManager.AppAlbumLogic().GetCountByUser(users[i].Id);
+                    var imagesCount = logicManager.ImageLogic().GetCountByUser(users[i].Id);
+                    <div class="user-cell">
+                        <div class="user-avatar">
+                            <a href="~/Users/Index?id=@users[i].Id">
+                                <img src="~/Images/View?from=user&id=@users[i].Id" />
+                            </a>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name">
+                                <a href="~/Users/Index?id=@users[i].Id">@users[i].Login</a>
+                            </span>
+                            <span class="albums-count">Albums: @albumsCount</span>
+                            <span class="images-count">Images: @imagesCount</span>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="searching-albums">
+        <div class="input-field">
+            <span class="incorrect-input">You must type something!</span>
+            <label for="albumInput">Type an album <span class="by-name show-span">name</span><span class="by-tag">tag</span> in whole or in part:</label>
+            <input id="albumInput" type="text" name="albumName" />
+            <span class="toggle-by-name">By name</span>
+            <input id="searchToggle" type="checkbox" class="search-toggle" />
+            <label for="searchToggle">By tag</label>
+            <button class="start-searching" value="albums">Search</button>
+        </div>
+        <div class="search-results">
+            @if (albums != null)
+            {
+                for (var i = 0; i < albums.Count; i++)
+                {
+                    <div class="album-cell">
+                        <a class="album-title" href="~/Album/Index?id=@albums[i].Id">
+                            <img src="~/Images/View?from=image&id=@albums[i].TitleImageId" />
+                        </a>
+                        <div class="album-info">
+                            <span class="album-name">
+                                Album: <a href="~/Album/Index?id=@albums[i].Id">@albums[i].Name</a>
+                            </span>
+                            <span class="user-name">
+                                Owner: <a href="~/Users/Index?name=@albums[i].Owner">@albums[i].Owner</a>
+                            </span>
+                            <span class="album-count">Images: @albums[i].Count</span>
+                            <div class="album-tags">
+                                <span>Tags: </span>
+                                @if (albums[i].Tags != null)
+                                {
+                                    var albumTags = albums[i].Tags;
+                                    for (var j = 0; j < albumTags.Count; j++)
+                                    {
+                                        <a href="~/Search/Index?obj=album&tagid=@albumTags[j].Id">@albumTags[j].Name</a>if (j != albumTags.Count - 1)
+                                        { <span class="comma">,</span> }
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="all-tags">
+        @{ 
+            var tags = logicManager.TagLogic().GetAll();
+
+            if (tags != null)
+            {
+                for(var i = 0; i < tags.Count; i++)
+                {
+                    int tagCount = logicManager.TagLogic().GetAlbumTagCount(tags[i].Id);
+                    <span class="tag-span"><a href="~/Search/Index?obj=album&tagId=@tags[i].Id">@tags[i].Name</a> (@tagCount) @if(i != tags.Count - 1) {<span class="semicolon">;</span>}</span> 
+                }
+            }
+        }
+    </div>
+</article>
+

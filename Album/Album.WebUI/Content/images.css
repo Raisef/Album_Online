@@ -1,0 +1,286 @@
+﻿*{
+    box-sizing:border-box;
+}
+
+body{
+    background-color: #e0dfdd;
+}
+
+
+.scroll-lock{
+    overflow:hidden;
+}
+
+.album-field{
+    margin-top: 40px;
+    background-color: #fff7e0;
+    padding: 5px;
+    padding-bottom: 15px;
+}
+
+.album-images{
+    width: 100%;
+    min-width: 260px;
+    text-align:center;
+}
+
+#addImagesBtn{
+    position:absolute;
+    top: 40px;
+    width:100%;
+    height: 39px;
+    background: none;
+    border: none;
+    padding-bottom: 2px;
+    border-bottom: 3px solid #5d5c5c;
+    background-color:cornsilk;
+    min-width: 260px;
+}
+
+#addImagesBtn:hover{
+    background-color: #f48300;
+}
+
+#home{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 45px;
+    width: 40px;
+    height: 39px;
+    text-align:center;
+    line-height:2.7;
+    text-decoration: none;
+    color: black;
+    border-bottom: 3px solid #5d5c5c;
+}
+
+#home:hover{
+    background-color: #f48300;
+}
+
+.remove-image-btn{
+    display:none;
+    position: absolute;
+    top: inherit;
+    background: none;
+    border: none;
+    font-size: 1.6em;
+    margin: -12px;
+}
+
+.image-cell:hover>.remove-image-btn{
+    display:block;
+}
+
+.set-title-btn{
+    display:none;
+    position:absolute;
+    top:inherit;
+    margin-top:71px;
+    border: none;
+    background: none;
+    font-size: 1.6em;
+    color: white;
+    background-color: #413c3c;
+    border: 2px solid #5d5c5c;
+    border-radius: 3px;
+    font-size: 1.6em;
+    padding: 0 2px 2px;
+}
+
+.image-cell:hover>.set-title-btn{
+    display:block;
+}
+
+.title-sign{
+    display:block;
+    position:absolute;
+    top:inherit;
+    margin-top:71px;
+    color: orange;
+    background-color: white;
+    border: 2px solid #5d5c5c;
+    border-radius: 3px;
+    font-size: 1.6em;
+    padding: 0 2px 2px;
+}
+
+.pop-up{
+    display:none;    
+}
+
+.show-block{
+    display:block;
+}
+
+.veil{
+    position:fixed;
+    top: 0; bottom: 0; right: 0; left: 0;
+    background-color: gray;
+    opacity: 0.7;    
+}
+
+.adding-images{
+    display: none;
+    top: 40px;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    min-height: 240px;
+    padding-bottom: 35px;
+}
+
+.adding-images.orange-bullet{
+    border-bottom: none;
+}
+
+div.adding-images.show-block{
+    display:block;
+}
+
+#uploader>input{
+    display: none;
+}
+
+#uploader{
+    width: 100%;
+    height: 35px;
+    text-align: center;
+    line-height: 3;
+    margin-bottom: 0;
+    border-bottom: 2px solid;
+    cursor: pointer;
+}
+
+.orange-bullet>.upload-field>#uploader{
+    border-bottom-color: orange;
+}
+
+.orange-bullet>.upload-field>#uploader:hover{
+    background-color: cornsilk;
+}
+
+#uploader>i{
+    position: inherit;
+    display: block;
+    font-size: 1.7em;
+    width: 100%;
+    height: 100%;
+    padding-top: 5px;
+}
+
+.upload-field{
+    width:100%;
+    text-align:center;
+}
+
+.image-cell{
+    display: inline-block;
+    margin: 10px 5px 10px 10px;
+}
+
+
+.uploaded-field>.image-cell>.remove-btn{
+    display:block;
+    background:none;
+    border: none;
+    font-size: 1.5em;
+    position:relative;
+    margin: auto -15px -10px auto;
+}
+
+.big-image{
+    height: 360px
+}
+
+.thumbnail{
+    max-height: 100px;
+    margin: 0 auto;
+}
+
+.upload-controls{
+    position:absolute;
+    width: 100%;
+    height:35px;
+    bottom: 0;
+}
+
+.upload-controls>button{
+    width:50%;
+    height: 100%;
+    background: none;
+    border: none;
+    border-top: 2px solid black;
+    border-right: 1px solid black;
+}
+
+.upload-controls>button.glyphicon{
+    position:static;
+}
+
+.orange-bullet>.upload-controls>button:hover{
+    background-color: cornsilk;
+}
+
+
+.upload-controls>button:last-child{
+    border-right: none;
+    border-left: 1px solid black;
+}
+
+
+@media(min-width:381px){
+    #home{
+        left: 0;
+    }
+}
+
+
+
+@media(min-width:381px) and (max-width:800px){
+    #addImagesBtn{
+        right:inherit;
+        left:40px;
+        top:0;
+        width: 60px;
+        background-color: orange;
+        min-width: 60px;
+    }
+
+    .album-images{
+        text-align: left;
+    }
+
+    .thumbnail {
+        max-height: 120px;
+    }
+    .set-title-btn {
+        margin-top:101px;
+    }
+    .title-sign {
+        margin-top:101px;
+    }
+}
+
+@media(min-width:801px) {
+    #addImagesBtn{
+        right:130px;
+        left:inherit;
+        top:0;
+        width: 60px;
+        background-color: orange;
+        min-width: 60px;
+    }
+
+    .album-images{
+        text-align: left;
+    }
+
+    .adding-images {
+        width: 600px;
+        margin: auto;
+        left: 0;
+        right: 0;
+    }
+}

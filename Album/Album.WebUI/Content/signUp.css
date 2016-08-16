@@ -1,0 +1,153 @@
+﻿*{
+    box-sizing: border-box;
+}
+
+html,body{
+    background-color: #e0dfdd;
+    height: 100%;
+}
+
+#home{
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    text-align:center;
+    line-height:2.7;
+    text-decoration: none;
+    color: orange;
+    border-bottom: 4px solid white;
+}
+
+#home:hover{
+    color:white;
+}
+
+
+.reg-block{
+    width: 100%;
+    min-width: 260px;
+    height: 395px;
+    margin: 0px;
+    background-color: orange;
+}
+
+.reg-head{
+    text-align: center;
+}
+
+.reg-head>h1{
+    margin: 5px 10px;
+    font-size: 3em;
+    font-family: cursive;
+}
+
+.reg-form{
+    width: 90%;
+    margin: 10px auto;
+}
+
+.input-field{
+    width: 220px;
+    margin: 25px auto 0 auto;
+}
+
+.info-sm{
+    font-size: 0.7em;
+}
+
+.input-field>label{
+    width: 220px;
+}
+
+.input-field>input{
+    border-radius: 5px;
+    width: 220px;
+}
+
+.reg-info{
+    display: none;
+}
+
+.reg-form-controls{
+    text-align: center;
+    margin: 28px 15px 15px 15px;
+}
+
+.reg-form-controls>button{
+    width: 170px;
+    background-color: white;
+    border: 3px solid #070707;
+    border-radius: 6px;
+    font-size: 1.5em;
+    font-weight: 600;
+    font-family: cursive;
+    color: black;
+}
+
+.input-alert{
+    position: absolute;
+    min-width: 230px;
+    display: none;
+    background-color: #fff6f1;
+    color: red;
+    border:1px inset red;
+    border-radius: 5px;
+    font-size: 0.75em;
+    margin-top: 5px;
+    margin-left: -4px;
+}
+
+.input-field.input-incorrect>label>i{
+    color: red;
+}
+
+.input-field.input-incorrect>input{
+    border-color: red;
+    background-color: #f08585;
+}
+
+.input-field.input-incorrect>.input-alert{
+    display:block;
+}
+
+@media (min-width:361px) {
+
+    .reg-block {
+        width: 350px;
+        height: 325px;
+        border: 2px solid #000000;
+        border-radius: 5px;
+        margin: 150px auto;
+    }
+
+    .info-sm {
+        display: none;
+    }
+
+    .input-field{
+        width: 285px;
+    }
+
+    .input-field>label{
+        width: 130px;
+    }
+
+    .input-field>input{
+        border-radius: 5px;
+        width: 150px;
+    }
+    .reg-info{
+        display: inline-block;
+        margin: 0 5px;
+    }
+
+    .input-alert {
+        font-weight: 600;
+        font-size: 0.87em;
+        margin-top: 2px;
+        margin-left: inherit;
+    }
+}

@@ -1,0 +1,25 @@
+﻿*{
+    box-sizing:border-box;
+}
+
+.album-footer{
+    position:absolute;
+    margin:auto;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    min-width: 260px;
+    height: 40px;
+    background-color: black;
+    text-align: center;
+    border-top: 4px solid orange;
+    padding-top: 7px;
+}
+
+.footer-text{
+    color: lightgray;
+}
+
+.footer-year{
+    color: yellow;
+}

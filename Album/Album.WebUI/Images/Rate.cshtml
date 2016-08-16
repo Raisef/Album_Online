@@ -1,0 +1,155 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@using System.Data.SqlClient;
+@{
+    Layout = "";
+}
+
+@{
+    if (IsPost)
+    {
+        ILog Log = Logger.Instance.Log();
+
+        LogicManager logicManager;
+        try
+        {
+            logicManager = LogicManager.Instance;
+        }
+        catch (ConfigurationErrorsException ex)
+        {
+            Log.Fatal("Error in configurations", ex);
+            Response.SetStatus(HttpStatusCode.Conflict);
+            return;
+        }
+
+        var action = Request["action"];
+
+        if (string.IsNullOrWhiteSpace(action))
+        {
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+        }
+
+        var idString = Request["id"];
+        int imageId;
+
+        if (!int.TryParse(idString, out imageId) || imageId <= 0)
+        {
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+        }
+
+        if(action != "get" && action != "set")
+        {
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+        }
+
+        if (action == "get")
+        {
+            try
+            {
+                var watcher = Request["watcher"];
+                if (string.IsNullOrWhiteSpace(watcher))
+                {
+                    watcher = "";
+                }
+                var rates = logicManager.ImageLogic().GetAllRates(imageId);
+                <div class="dropup rates-menu">
+                    <button class="dropdown-toggle show-rates-btn" id="dropUpRates" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                       @{ var rate = logicManager.ImageLogic().GetAverageRate(imageId); }
+                        Rate: 
+                        @if (rate == 0)
+                        {
+                            <span>No rates!</span>
+                        }
+                        else
+                        { 
+                            <span>@rate</span>
+                        }
+                    </button>
+                
+
+                <ul class="dropdown-menu dropdown-menu-right users-rates" aria-labelledby="dropUpRates">
+                    @if (rates != null)
+                    {
+
+                        foreach (var userRate in rates)
+                        {
+                            <li class="user-rate @(watcher == userRate.Key.Login ? "watcher" : "")">
+                                <div class="user-avatar-sm">
+                                    <img class="img-responsive img-rounded" src="~/Images/View?from=user&id=@userRate.Key.Id" />
+                                </div>
+                                <a href="~/Users/Index?id=@userRate.Key.Id">@userRate.Key.Login</a>
+                                <span>@userRate.Value</span>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="no-rates">
+                            <span>No rates yet!</span>
+                        </li>
+                    }
+                </ul>
+                </div>
+                return;
+            }
+            catch (System.IO.IOException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.InternalServerError);
+            }
+            catch (SqlException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.InternalServerError);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.InternalServerError);
+            }
+        }
+        if(action == "set")
+        {
+            var rateString = Request["rate"];
+            var userName = Request["userName"];
+            int rate;
+            if (string.IsNullOrWhiteSpace(userName)
+                || !int.TryParse(rateString, out rate) || rate <= 0 || rate > 5)
+            {
+                Response.SetStatus(HttpStatusCode.BadRequest);
+                return;
+            }
+            try
+            {
+                if (logicManager.ImageLogic().Rate(userName, imageId, rate))
+                {
+                    Response.SetStatus(HttpStatusCode.OK);
+                }
+                return;
+            }
+            catch (System.IO.IOException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.InternalServerError);
+            }
+            catch (SqlException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.InternalServerError);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.InternalServerError);
+            }
+        }
+    }
+}

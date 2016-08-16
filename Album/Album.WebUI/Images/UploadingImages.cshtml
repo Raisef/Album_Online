@@ -1,0 +1,90 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@using System.Data.SqlClient;
+@{
+    Layout = "";
+}
+
+@{
+    if (IsPost)
+    {
+        ILog Log = Logger.Instance.Log();
+
+        LogicManager logicManager;
+        try
+        {
+            logicManager = LogicManager.Instance;
+        }
+        catch (ConfigurationErrorsException ex)
+        {
+            Log.Fatal("Error in configurations", ex);
+            Response.SetStatus(HttpStatusCode.Conflict);
+            return;
+        }
+
+        var files = Request.Files;
+        var idString = Request["albumId"];
+        int albumId;
+        if (files == null || !int.TryParse(idString, out albumId) || albumId == 0)
+        {
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+        }
+
+        List<Image> images = new List<Image>();
+        
+        for (var i = 0; i < files.Count; i++)
+        {
+            var file = files[i];
+            byte[] imageContent = new byte[file.ContentLength];
+            file.InputStream.Read(imageContent, 0, imageContent.Length);
+            string imageType = file.ContentType;
+            images.Add(new Image { AlbumId = albumId, Content = imageContent, ImageType = imageType });
+
+        }
+
+        try
+        {
+            List<int> imagesId = logicManager.ImageLogic().AddSeveral(images);
+            if (imagesId != null)
+            {
+                for (var i = 0; i < imagesId.Count; i++)
+                {
+                        <div class="image-cell">
+                            <button class="remove-image-btn glyphicon glyphicon-remove-sign" value="@imagesId[i]"></button>
+                            <button class="set-title-btn glyphicon glyphicon-picture" value="@imagesId[i]"></button>
+                            <a href="/Images/ImageShow?albumId=@albumId&imgId=@imagesId[i]">
+                                <img class="thumbnail img-responsive img-rounded" src="/Images/View?from=image&amp;id=@imagesId[i]">
+                            </a>
+                        </div>
+                }
+                return;
+            }
+            else
+            {
+                Response.SetStatus(HttpStatusCode.BadRequest);
+            }
+        }
+        catch (System.IO.IOException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.BadRequest);
+        }
+        catch (SqlException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.BadRequest);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.BadRequest);
+        }
+        Response.Redirect("~");
+    }
+}

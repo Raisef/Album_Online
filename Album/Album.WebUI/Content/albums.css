@@ -1,0 +1,312 @@
+﻿*{
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #e0dfdd;
+}
+
+#createAlbumBtn{
+    top: 40px;
+    width:100%;
+    height: 39px;
+    background: none;
+    border: none;
+    padding-bottom: 2px;
+    border-bottom: 3px solid #5d5c5c;
+    background-color:cornsilk;
+    min-width: 260px;
+    position:absolute;
+}
+
+#createAlbumBtn:hover{
+    background-color: #f48300;
+}
+
+.user-albums{
+    margin: 10px 5px;
+    margin-top: 45px;
+    text-align: center;
+    min-width: 250px;
+}
+
+.album-cell{
+    width:100%;
+    height: 250px;
+    position:relative;
+    background:rgba(0, 0, 0, 1);
+    border-top: 2px solid rgb(128, 128, 128);
+}
+
+.album-title{
+    display:block;
+    height:100%;
+}
+
+.album-title>img{
+    display: block;
+    opacity: inherit;
+    position:absolute;
+    top:0; bottom: 0; right: 0; left:0;
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+}
+.album-info{
+    position:absolute;
+    bottom:0;
+    background-color: rgba(0, 0, 0, 0.58);
+    width:100%;
+    overflow-y:hidden;
+    color:rgba(254, 243, 195, 0.88);
+    max-height: 85px;
+    padding: 3px;
+}
+
+.album-name{
+    display:block;
+}
+
+.album-info a{
+    color: orange;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.album-tags{
+    display: none;
+}
+
+.album-info:hover>.album-tags{
+    display:block;
+}
+
+.album-info:hover{
+    overflow-y:auto;
+}
+
+.btn-group{
+    display: block;
+    color: black;
+    position:absolute;
+    margin: auto;
+    top: 0; left:0; right: 0;
+    width: 80px;
+}
+
+.album-cell>.btn-group>.btn{
+    
+    height: 16px;
+    width: 20px;
+    font-size: 0.7em;
+    padding: 0;
+    color: #6d6d6d;
+    background-color: white;
+    border: 1px solid #a2a2a2;
+    z-index: inherit;
+}
+
+.pop-up-input{
+    display: none;
+    top: 80px;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    height: 200px;
+    padding-bottom: 35px;
+}
+
+.pop-up-input.orange-bullet{
+    border-bottom: none;
+}
+
+.pop-up-input>header{
+    width: 100%;
+    height: 40px;
+    border-bottom: 2px solid orange;
+    text-align:center;
+    padding-top: 8px;
+    font-weight: 600;
+    font-family:cursive;
+    font-size: 1.2em;
+}
+
+.input-field{
+    width: 280px;
+    margin: 30px auto;
+    padding: 0 13px;
+}
+
+.input-field>label{
+    display:block;
+    font-weight:normal;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 1.2em;
+    padding-left: 15px;
+}
+
+.input-field>input{
+    width:100%;
+    border: 1px solid black;
+}
+
+.pop-up-input>.input-controls{
+    position:absolute;
+    width:100%;
+    height: 40px;
+    bottom: 0;
+}
+
+.pop-up-input>.input-controls>button{
+    display: inline-block;
+    height:100%;
+    width: 50%;
+    background: none;
+    border:none;
+    border-top: 2px solid black;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 600;
+    font-size: 1.2em;
+}
+.pop-up-input>.input-controls>button:last-child{
+    border-right: none;
+    border-left: 1px solid black;
+}
+
+.incorrect{
+    display:none;
+    text-align:center;
+    border: 1px ridge red;
+    border-top:none;
+    color:red;
+}
+
+input.danger-border{
+    border:1px solid red;
+}
+
+.orange-bullet.pop-up-input>.input-controls>button:hover{
+    background-color: cornsilk;
+}
+
+.remove-tag{
+    background:none;
+    border: none;
+    color: rgb(246, 103, 57);
+}
+
+/*.renaming-album{
+    display: none;
+    top: 80px;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    height: 200px;
+    padding-bottom: 35px;
+}
+
+.renaming-album.orange-bullet{
+    border-bottom: none;
+}
+
+.renaming-album-header{
+    width: 100%;
+    height: 40px;
+    border-bottom: 2px solid orange;
+    text-align:center;
+    padding-top: 8px;
+    font-weight: 600;
+    font-family:cursive;
+    font-size: 1.2em;
+}
+
+.renaming-controls{
+    position:absolute;
+    width:100%;
+    height: 40px;
+    bottom: 0;
+}
+
+.renaming-controls>button{
+    display: inline-block;
+    height:100%;
+    width: 50%;
+    background: none;
+    border:none;
+    border-top: 2px solid black;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.renaming-controls>button:last-child{
+    border-right: none;
+    border-left: 1px solid black;
+}
+
+.orange-bullet>.renaming-controls>button:hover{
+    background-color: cornsilk;
+}*/
+
+.show-block{
+    display:block;
+}
+
+
+@media (min-width: 381px){
+    #createAlbumBtn{
+        text-align: right;
+        right:inherit;
+        left:0;
+        top:0;
+        width: 60px;
+        background-color: orange;
+        min-width: 60px;
+    }
+
+    .pop-up-input{
+        width: 350px;
+        margin: auto;
+        left: 0;
+        right: 0;
+    }
+
+    .user-albums{
+        text-align:left;
+    }
+    
+    .album-cell{
+        height: 300px;
+    }
+    .thumbnail {
+        max-height: 120px;
+    }
+
+}
+
+@media(min-width:625px) {
+    .album-cell{
+        height: 290px;
+        width:310px;
+        display:inline-block;
+    }
+}
+
+@media(min-width:801px) {
+    #createAlbumBtn{
+        right:130px;
+        left:inherit;
+        top:0;
+        width: 60px;
+        background-color: orange;
+        min-width: 60px;
+    }
+    .album-cell>.btn-group{
+        overflow: hidden;
+        height: 0;
+        transition: 0.5s;
+    }
+    .album-cell:hover>.btn-group{
+        height: 17px;
+        margin: 0 auto;
+    }
+}

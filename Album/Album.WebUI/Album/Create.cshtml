@@ -1,0 +1,84 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@using System.Data.SqlClient;
+@{
+    Layout = "";
+}
+
+@{
+    if (IsPost)
+    {
+        ILog Log = Logger.Instance.Log();
+
+        LogicManager logicManager;
+        try
+        {
+            logicManager = LogicManager.Instance;
+        }
+        catch (ConfigurationErrorsException ex)
+        {
+            Log.Fatal("Error in configurations", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+            return;
+        }
+
+        var albumName = Request["albumName"];
+        var userIdString = Request["userId"];
+        int userId;
+        if (string.IsNullOrWhiteSpace(albumName) || !int.TryParse(userIdString, out userId) || userId <= 0)
+        {
+            Response.SetStatus(HttpStatusCode.BadRequest);
+            return;
+        }
+        try
+        {
+            int albumId = logicManager.AppAlbumLogic().Create(userId, albumName);
+            if (albumId > 0)
+            {
+                <div id="@albumId" class="album-cell">
+                    <a href="~/Album/Index?id=@albumId">
+                        <img src="~/Images/View?from=image&id=0" class="img-responsive" />
+
+                        <span class="album-name">@albumName</span>
+                    </a>
+                    <span class="album-count">0</span>
+                    <div class="btn-group" role="group" aria-label="album-conrol">
+                        <button value="@albumId" type="button" class="btn btn-xs add-images-btn glyphicon glyphicon-plus" title="Add image"></button>
+                        <button value="@albumId" type="button" class="btn btn-xs rename-album-btn glyphicon glyphicon-pencil" title="Rename album"></button>
+                        <button value="@albumId" type="button" class="btn btn-xs delete-album-btn glyphicon glyphicon-remove" title="Delete album"></button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                Response.SetStatus(HttpStatusCode.InternalServerError);
+                return;
+            }
+
+        }
+        catch (System.IO.IOException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+            return;
+        }
+        catch (SqlException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+            return;
+        }
+        catch (InvalidOperationException ex)
+        {
+            Log.Fatal("Fatal error on adding tag.", ex);
+            Response.SetStatus(HttpStatusCode.InternalServerError);
+            return;
+        }
+
+    }
+}

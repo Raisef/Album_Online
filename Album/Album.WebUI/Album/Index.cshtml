@@ -1,0 +1,105 @@
+﻿@using System;
+@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+
+@{
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+
+    if (!User.Identity.IsAuthenticated)
+    {
+        Response.SetStatus(HttpStatusCode.Unauthorized);
+        return;
+    }
+
+    var idString = Request["id"];
+    int id;
+    if (!int.TryParse(idString, out id))
+    {
+        Response.Redirect("~");
+    }
+    AppAlbum album = logicManager.AppAlbumLogic().Get(id);
+
+    if (album == null)
+    {
+        Response.SetStatus(HttpStatusCode.BadRequest);
+    }
+
+    Page.Title = album.Name;
+}
+
+@section styles{
+    <link rel="stylesheet" href="~/Content/images.css" />
+}
+
+@section scripts{
+@if (User.Identity.Name == album.Owner)
+{
+    <script src="~/scripts/imageUpload.js"></script>
+}
+    <script src="~/scripts/Images.js"></script>
+}
+@if (User.Identity.Name == album.Owner)
+{
+    <button id="addImagesBtn" class="glyphicon glyphicon-plus" value="@album.Id">Add Images</button>
+}
+<a id="home" href="~/Index" class="glyphicon glyphicon-home"></a>
+<article class="album-field">
+    <div class="album-images">
+        @{
+            var images = logicManager.ImageLogic().GetAllByAlbum(album.Id);
+            if (images != null)
+            {
+                for (var i = 0; i < images.Count; i++)
+                {
+                    <div class="image-cell">
+                        @if (User.Identity.Name == album.Owner)
+                        {
+                            <button class="remove-image-btn glyphicon glyphicon-remove-sign" value="@images[i].Id" title="Remove image"></button>
+                            if (album.TitleImageId != images[i].Id)
+                            {
+                                <button class="set-title-btn glyphicon glyphicon-picture" value="@images[i].Id" title="Set as album title"></button>
+                            }
+                            else
+                            {
+                                <i id="@images[i].Id" class="title-sign glyphicon glyphicon-picture" ></i>
+                            }
+                        }
+                        <a href="~/Images/ImageShow?albumId=@album.Id&imgId=@images[i].Id">
+                            <img class="thumbnail img-responsive img-rounded" src="~/Images/View?from=image&id=@images[i].Id" />
+                        </a>
+                    </div>
+                }
+            }
+        }
+    </div>
+</article>
+<div class="pop-up">
+    <div class="veil"></div>
+    <div class="adding-images orange-bullet">
+        <form class="upload-field" action="~/Images/UploadingImages.cshtml" method="POST" enctype="multipart/form-data">
+            <input id="hiddenAlbumId" type="hidden" name="albumId" value="0" />
+            <label id="uploader"><input type="file" name="uploaded" accept="image/*" multiple /><i class="glyphicon glyphicon-plus-sign"></i></label>
+        </form>
+        <div class="uploaded-field"></div>
+        <div class="upload-controls">
+            <button id="btnUpload" class="glyphicon glyphicon-ok"></button><!--
+         --><button id="btnCancelUpload" class="glyphicon glyphicon-remove"></button>
+        </div>
+    </div>
+</div>

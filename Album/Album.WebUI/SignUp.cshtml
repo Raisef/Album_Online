@@ -1,0 +1,109 @@
+﻿@using Album.Entities;
+@using Album.LogService;
+@using log4net;
+@using System.Collections.Generic;
+@using Album.WebUI.Models
+@using System.Configuration;
+@using System.Data.SqlClient;
+
+@{
+    if (User.Identity.IsAuthenticated)
+    {
+        Response.Redirect("~");
+    }
+
+    Page.Title = "Sign Up";
+
+    ILog Log = Logger.Instance.Log();
+
+    LogicManager logicManager;
+    try
+    {
+        logicManager = LogicManager.Instance;
+    }
+    catch (ConfigurationErrorsException ex)
+    {
+        Log.Fatal("Error in configurations", ex);
+        Response.SetStatus(HttpStatusCode.Conflict);
+        return;
+    }
+
+    if (IsPost)
+    {
+        string nick = Request["nickname"];
+        string pass = Request["password"];
+
+        if(!string.IsNullOrWhiteSpace(nick) && nick.Length >= 2
+            && !string.IsNullOrWhiteSpace(pass) && pass.Length >= 4)
+        {
+            try
+            {
+                int newUser = logicManager.UserLogic().Create(nick, pass);
+                if(newUser != 0)
+                {
+                    FormsAuthentication.SetAuthCookie(nick, createPersistentCookie: false);
+                    Response.Redirect("~/Index");
+                }
+            }
+            catch (System.IO.IOException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadGateway);
+            }
+            catch (SqlException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadGateway);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Log.Fatal("Fatal error on adding tag.", ex);
+                Response.SetStatus(HttpStatusCode.BadGateway);
+            }
+        }
+    }
+}
+
+
+@section styles{
+    <link href="~/Content/signUp.css" rel="stylesheet" />
+    }
+
+@section scripts{
+    <script src="~/scripts/signUp.js"></script>
+    }
+<a id="home" href="~/Index" class="glyphicon glyphicon-home"></a>
+
+<article class="reg-block oragne-bullet">
+    <header class="reg-head">
+        <h1>Sign Up</h1>
+        <span>Please, complete the form.</span>
+    </header>
+    <form class="reg-form" action="~/SignUp" method="post">
+        <div class="input-field">
+            <label for="nickname">Nickname
+                <span class="info-sm">(At least two characters)</span>
+                <i class="reg-info glyphicon glyphicon-info-sign" title="At least two characters."></i>
+            </label>
+            <input id="nickname" type="text" name="nickname">
+            <div id="alert-nickname" class="input-alert"><span>Nickname must contains at least two characters!</span></div>
+        </div>
+        <div class="input-field">
+            <label for="password">Password
+                <span class="info-sm">(At least four characters)</span>
+                <i class="reg-info glyphicon glyphicon-info-sign" title="At least four characters."></i>
+            </label>
+            <input id="password" type="password" name="password">
+            <div id="alert-password" class="input-alert"><span>Password must contains at least four characters!</span></div>
+        </div>
+        <div class="input-field">
+            <label for="confirmPass">Confirm Password</label>
+            <input id="confirmPass" type="password">
+            <div id="alert-confirm" class="input-alert"><span>Passwords, that you entered, must be the same!</span></div>
+        </div>
+        <div class="reg-form-controls">
+            <button class="btn" id="btnSignUp" type="button">Sign Up!</button>
+        </div>
+    </form>
+</article>
+
